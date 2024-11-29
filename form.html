@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Love Form Submission</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        textarea {
+            height: 100px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .alert {
+            color: red;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <h1>Answer a few questions</h1>
+        <form id="loveForm">
+            <!-- Name of the person -->
+            <label for="email">Your email to get AI response:</label>
+            <input type="email" id="email" name="email" placeholder="Your Email" required>
+
+            <!-- Name of the person -->
+            <label for="nameOfThePerson">Name of the person:</label>
+            <input type="text" id="nameOfThePerson" name="nameOfThePerson" placeholder="Who do you love?" required>
+
+            <!-- What’s a small thing about them that always makes you smile? -->
+            <label for="ans1">What’s a small thing about them that always makes you smile?</label>
+            <textarea id="ans1" name="ans1" placeholder="Write something that makes you smile" required></textarea>
+
+            <!-- If you had to describe them in one word, what would it be? -->
+            <label for="ans2">If you had to describe them in one word, what would it be?</label>
+            <textarea id="ans2" name="ans2" placeholder="One word to describe them" required></textarea>
+
+            <!-- How did you first meet this person? -->
+            <label for="howDidYouFirstMeetThisPerson">How did you first meet this person?</label>
+            <textarea id="howDidYouFirstMeetThisPerson" name="howDidYouFirstMeetThisPerson" placeholder="Your first meeting story" required></textarea>
+
+            <!-- What’s one memory with them that you’ll never forget? -->
+            <label for="memory">What’s one memory with them that you’ll never forget?</label>
+            <textarea id="memory" name="memory" placeholder="Share a memorable moment" required></textarea>
+
+            <!-- What’s a quality about them that inspires you? -->
+            <label for="whatsAQualityAboutThemThatInspiresYou">What’s a quality about them that inspires you?</label>
+            <select id="whatsAQualityAboutThemThatInspiresYou" name="whatsAQualityAboutThemThatInspiresYou" required>
+                <option value="Kindness">Kindness</option>
+                <option value="Intelligence">Intelligence</option>
+                <option value="Humor">Humor</option>
+                <option value="Creativity">Creativity</option>
+                <option value="Confidence">Confidence</option>
+            </select>
+
+            <!-- What’s one thing you’d like to say to this person? -->
+            <label for="whatsOneThingYoudLikeToSayToThisPerson">Provide information about the person as much as possible so that I can plan</label>
+            <textarea id="whatsOneThingYoudLikeToSayToThisPerson" name="whatsOneThingYoudLikeToSayToThisPerson" placeholder="Detailed Information" required></textarea>
+
+            <!-- Do you believe this person feels the same way about you? -->
+            <label for="sameWay">Do you believe this person feels the same way about you?</label>
+            <select id="sameWay" name="sameWay" required>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+                <option value="Maybe">Maybe</option>
+            </select>
+
+            <!-- Submit button -->
+            <button type="submit">Submit</button>
+        </form>
+        <div class="alert" id="alertMessage"></div>
+    </div>
+
+    <script>
+    document.getElementById('loveForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        // Get form data
+        const formData = new FormData(e.target);
+
+        // Prepare the data for Contentful
+        const data = {
+            fields: {
+                nameOfThePerson: { 'en-US': formData.get('nameOfThePerson') },
+                ans1: { 'en-US': formData.get('ans1') },
+                ans2: { 'en-US': formData.get('ans2') },
+                howDidYouFirstMeetThisPerson: { 'en-US': formData.get('howDidYouFirstMeetThisPerson') },
+                memory: { 'en-US': formData.get('memory') },
+                whatsAQualityAboutThemThatInspiresYou: { 'en-US': formData.get('whatsAQualityAboutThemThatInspiresYou') },
+                whatsOneThingYoudLikeToSayToThisPerson: { 'en-US': formData.get('whatsOneThingYoudLikeToSayToThisPerson') },
+                sameWay: { 'en-US': formData.get('sameWay') }
+            }
+        };
+
+        try {
+            const response = await fetch(`https://api.contentful.com/spaces/b8k3dxkfv0cu/environments/master/entries`, {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer CFPAT-TxE7pqnC7jRXJQpExwmwJ04xZgWYaI1U1c415j2wF74`,
+                    'Content-Type': 'application/vnd.contentful.management.v1+json',
+                    'X-Contentful-Content-Type': 'loveFormSubmission', 
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (response.ok) {
+                document.getElementById('alertMessage').innerHTML = 'Thanks. We are processing your questions. Will get back to you within 24 hours';
+                document.getElementById('alertMessage').style.color = 'green';
+            } else {
+                const errorData = await response.json();
+                document.getElementById('alertMessage').innerHTML = `Error: ${errorData.message}`;
+                document.getElementById('alertMessage').style.color = 'red';
+            }
+        } catch (err) {
+            console.error(err);
+            document.getElementById('alertMessage').innerHTML = 'An error occurred.';
+            document.getElementById('alertMessage').style.color = 'red';
+        }
+    });
+</script>
+
+
+</body>
+</html>
